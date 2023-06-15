@@ -13,26 +13,48 @@
     $sql = "SELECT * FROM questionnaire";
     $res = mysqli_query($link, $sql);
 
-    echo "<table border='1'>";
-    echo "    <tr>";
-    echo "        <th>ID</th>";
-    echo "        <th>氏名</th>";
-    echo "        <th>参加するかどうか</th>";
-    echo "        <th>コメント</th>";
-    echo "        <th> </th>";
-    echo "    </tr>";
-
-    while($row = mysqli_fetch_assoc($res)) {
-        echo "<tr>";
-        echo "  <td>{$row['userid']}</td>";
-        echo "  <td>{$row['username']}</td>";
-        echo "  <td>{$row['participation_id']}</td>";
-        echo "  <td>{$row['comment']}</td>";
-        echo "  <td><a href = "."edit.php".">編集</a> <a href = "."delete.php".">削除</a></td>";
-        echo "</tr>";
-    }
-    
-    echo "</table>";
-    // 接続断
-    mysqli_close($link);
 ?>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アンケート入力</title>
+</head>
+<body>
+    <table border='1'>
+        <tr>
+            <th>ID</th>
+            <th>氏名</th>
+            <th>参加するかどうか</th>
+            <th>コメント</th>
+            <th> </th>
+        </tr>
+
+    <?php while($row = mysqli_fetch_assoc($res)) : ?>
+        <tr>
+            <td><?= $row['userid'] ?></td>
+            <td><?= $row['username'] ?></td>
+            <td><?= $row['participation_id'] ?></td>
+            <td><?= $row['comment'] ?></td>
+        
+            <form action="./edit.php" method="POST">
+            <input type=hidden name="userid" value=<?= $row["userid"] ?>>
+            <td><input type=submit value=更新></td>
+            </form>
+
+            <form action="./delete.php" method="POST">
+            <input type=hidden name="userid" value=<?= $row["userid"] ?>>
+            <td><input type=submit value=削除></td>
+            </form>
+
+        </tr>
+    <?php endwhile; ?>
+    
+    
+    </table>
+    <!-- 接続断 -->
+    <?php mysqli_close($link) ?>
+</body>
+</html>
