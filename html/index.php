@@ -29,7 +29,7 @@
             <th>氏名</th>
             <th>参加するかどうか</th>
             <th>コメント</th>
-            <th> </th>
+            <th colspan="2"> </th>
         </tr>
 
     <?php while($row = mysqli_fetch_assoc($res)) : ?>
