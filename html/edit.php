@@ -9,7 +9,7 @@
     mysqli_set_charset($link, 'utf8');
 
     // SELECT文を実行
-    $sql = "SELECT username,participation_id,comment FROM questionnaire where userid ='$userid'";
+    $sql = "SELECT username,participation_id,comment FROM questionnaire where userid ='" . $_POST['userid'] . "'";
     $res = mysqli_query($link, $sql);
 
     // 結果の行を取得
