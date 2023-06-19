@@ -20,10 +20,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php include('Bootstarp_first.php'); ?>
     <title>アンケート入力</title>
 </head>
 <body>
-    <table border='1'>
+<h1 class="my-3">新人歓迎会参加アンケート結果</h1>
+    <table border="1">
         <tr>
             <th>ID</th>
             <th>氏名</th>
@@ -36,11 +38,15 @@
         <tr>
             <td><?= $row['userid'] ?></td>
             <td><?= $row['username'] ?></td>
-            <td><?= $row['participation_id'] ?></td>
+            <td><?php
+                $val = ($row['participation_id'] === "1" )? '参加！' : '不参加で。。。';
+                echo $val;
+            ?></td>
             <td><?= $row['comment'] ?></td>
         
-            <form action="./edit.php" method="POST">
-            <input type=hidden name="userid" value=<?= $row["userid"] ?>>
+            
+            <form action="./edit.php" method="GET">
+            <input type=hidden name="userid" value=<?= $row["userid"] ?>/>
             <td><input type=submit value=更新></td>
             </form>
 
@@ -51,10 +57,15 @@
 
         </tr>
     <?php endwhile; ?>
-    
-    
     </table>
+    <form action="./add.php" method="GET">
+    <input type=hidden name="" value="">
+    <td><input type=submit value=アンケートに回答する></td>
+    </form>
+
+
     <!-- 接続断 -->
     <?php mysqli_close($link) ?>
+    <?php include('Bootstarp_second.php'); ?>
 </body>
 </html>

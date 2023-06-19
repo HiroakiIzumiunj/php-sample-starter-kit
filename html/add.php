@@ -9,8 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     }
     
     // データの投入
-    $sql = "INSERT INTO `questionnaire` (`username`, `participation_id`, `comment`) VALUES ('"
-        . $_POST['username'] . "', " . $_POST['participation_id'] . ", '" . $_POST['comment'] . "');"; 
+    $sql = "INSERT INTO `questionnaire` (`username`, `participation_id`, `comment`) VALUES ('"  . $_POST['username'] . "', " . $_POST['participation_id'] . ", '" . $_POST['comment'] . "');"; 
     mysqli_query($link, $sql);
     
     // ホーム画面にリダイレクト
