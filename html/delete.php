@@ -4,6 +4,8 @@ session_start();
 
 function validateToken()
 {
+    // var_dump($_SESSION['token']);
+    // var_dump(filter_input(INPUT_POST, 'token'));
         if (
             empty($_SESSION['token']) ||
             $_SESSION['token'] !== filter_input(INPUT_POST, 'token')
@@ -26,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     // 文字コード
     mysqli_set_charset($link, 'utf8');
 
-    $userid = mysqli_real_escape_string($link, $_GET['userid']);
+    $userid = mysqli_real_escape_string($link, $_POST['userid']);
 
     // SELECT文を実行
     $sql ="DELETE from questionnaire WHERE userid = '$userid'";

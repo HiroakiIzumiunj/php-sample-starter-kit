@@ -67,12 +67,13 @@
             <form action="./delete.php" method="POST">
             <input type=hidden name="userid" value=<?= $row["userid"] ?>>
             <td><input type=submit value=削除 class="btn btn-link"></td>
+            <input type="hidden" name="token" value="<?= htmlspecialchars($_SESSION['token']); ?>">
             </form>
 
             <!-- トークンをdelete.phpに送る -->
-            <form action="./delete.php" method="POST">
+            <!-- <form action="./delete.php" method="POST">
             <input type="hidden" name="token" value="<?= htmlspecialchars($_SESSION['token']); ?>">
-            </form>
+            </form> -->
 
 
         </tr>
