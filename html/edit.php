@@ -11,11 +11,43 @@ function validateToken()
         }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === "POST"){
+    
+    if((mb_strlen($_POST['username'])<1) || (mb_strlen($_POST['username'])>20)){
+    
+        $err_username = "ユーザー名を20文字以内で入力して下さい。";
+
+        $username_border_color = "red";
+    
+        $err_username_flag = true;
+        
+    }
+    else   
+    {
+        $err_username_flag = false;
+    }
+
+    if((mb_strlen($_POST['comment'])>100)){
+    
+        $err_comment = "ユーザーは100文字以内で入力して下さい。";
+        
+        $comment_border_color = "red";
+    
+        $err_comment_flag = true;
+        
+    }
+    else   
+    {
+        $err_comment_flag = false;
+    } 
+        
+}
+
 ini_set('display_errors', 0);
 
 // 接続処理
     // POST のときはデータの投入を実行
-if ($_SERVER['REQUEST_METHOD'] === "POST") {
+if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_comment_flag) {
 
     validateToken();
     // データベースへの接続
@@ -69,13 +101,32 @@ else{
     <?php include('./Bootstrap_first.php'); ?>
     <title>アンケート入力</title>
 </head>
+<style>
+
+    .err_username_form{
+        border-color:<?= $username_border_color; ?>
+    }
+
+    .err_comment_form{
+        border-color:<?= $comment_border_color; ?>
+    }
+
+
+
+</style>
 <body>
 <div class="container">
     <h1 class="my-3">新人歓迎会参加アンケート</h1>
     <form method="POST" action="./edit.php">
         <div class="form-group">
-            <label for="username">氏名</label>
-            <input type="text" name="username" class="form-control" maxlength="20" value=<?=  $row['username'] ?>/>
+            
+                <label for="username">氏名</label>
+                
+                <input type="text" name="username" class="form-control err_username_form" value=<?=  $row['username'] ?>/>
+                <i class="bi bi-exclamation-circle"></i>
+        
+                <FONT COLOR="red"><?= isset($err_username) ? $err_username : null ?></FONT>
+            
         </div>
         <div class="form-group">
             <label for="participation_id">新人歓迎会に参加しますか？:</label>
@@ -100,8 +151,13 @@ else{
             </select>
         </div>
         <div class="form-group">
-            <label for="comment">コメント:</label>
-            <textarea name="comment" class="form-control" maxlength="100"><?= $row['comment'] ?></textarea>
+            
+                <label for="comment">コメント:</label>
+                <textarea name="comment" class="form-control err_comment_form"><?= $row['comment'] ?></textarea>
+                <i class="bi bi-exclamation-circle"></i>
+            
+                <FONT COLOR="red"><?= isset($err_comment) ? $err_comment : null ?></FONT>
+            
         </div>
         <div>
         <input type="hidden" name="userid" value=<?= $row['userid'] ?> />
@@ -114,5 +170,6 @@ else{
     </form>
     <?php include('./Bootstrap_second.php'); ?>
     </div>
+    
 </body>
 </html>

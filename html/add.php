@@ -12,9 +12,40 @@ function validateToken()
         }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === "POST"){
+    
+    if((mb_strlen($_POST['username'])<1) || (mb_strlen($_POST['username'])>20)){
+    
+        $err_username = "ユーザー名を20文字以内で入力して下さい。";
+
+        $username_border_color = "red";
+    
+        $err_username_flag = true;
+        
+    }
+    else   
+    {
+        $err_username_flag = false;
+    }
+
+    if((mb_strlen($_POST['comment'])>100)){
+    
+        $err_comment = "ユーザーは100文字以内で入力して下さい。";
+        
+        $comment_border_color = "red";
+    
+        $err_comment_flag = true;
+        
+    }
+    else   
+    {
+        $err_comment_flag = false;
+    } 
+        
+}
 // POST のときはデータの投入を実行
 //
-if ($_SERVER['REQUEST_METHOD'] === "POST") {
+if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_comment_flag) {
 
     validateToken();
     // データベースへの接続
@@ -23,13 +54,18 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         die("データベースの接続に失敗しました。");
     }
     
+    
     // データの投入
     $sql = "INSERT INTO `questionnaire` (`username`, `participation_id`, `comment`) VALUES ('"  . $_POST['username'] . "', " . $_POST['participation_id'] . ", '" . $_POST['comment'] . "');"; 
     mysqli_query($link, $sql);
+
+    
     
     // ホーム画面にリダイレクト
     header('Location: http://' . $_SERVER['HTTP_HOST']);
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -46,7 +82,13 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     <form method="POST" action="./add.php">
         <div class="form-group">
             <label for="username">氏名</label>
-            <input type="text" name="username" class="form-control"/>
+            <input type="text" name="username" class="form-control err_username_form"/>
+            <style>
+                .err_username_form{
+                    border-color:<?= $username_border_color; ?>
+                }
+            </style>
+            <FONT COLOR="red"><?= isset($err_username) ? $err_username : null ?></FONT>
         </div>
         <div class="form-group">
             <label for="participation_id">新人歓迎会に参加しますか？:</label>
@@ -57,7 +99,13 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         </div>
         <div class="form-group">
             <label for="comment">コメント:</label>
-            <textarea name="comment" class="form-control"></textarea>
+            <textarea name="comment" class="form-control err_comment_form"></textarea>
+            <style>
+                .err_comment_form{
+                    border-color:<?= $comment_border_color; ?>
+                }
+            </style>
+            <FONT COLOR="red"><?= isset($err_comment) ? $err_comment : null ?></FONT>
         </div>
         <div>
             <a href='./index.php' class="btn btn-secondary">戻る</a>
