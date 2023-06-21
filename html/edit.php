@@ -1,7 +1,23 @@
 <?php
+session_start();
+
+function validateToken()
+{
+        if (
+            empty($_SESSION['token']) ||
+            $_SESSION['token'] !== filter_input(INPUT_POST, 'token')
+        ){
+            exit('Invalid post request');
+        }
+}
+
+ini_set('display_errors', 0);
+
 // 接続処理
     // POST のときはデータの投入を実行
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
+
+    validateToken();
     // データベースへの接続
     $link = mysqli_connect('db', 'root', 'secret', 'sample');
     if ($link == null) {
@@ -11,8 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     // 文字コード
     mysqli_set_charset($link, 'utf8');
 
+    $userid = mysqli_real_escape_string($link, $_POST['userid']);
+
     // SELECT文を実行
-    $sql ="UPDATE questionnaire SET username = '". $_POST['username'] . "', participation_id = '" . $_POST['participation_id'] . "', comment = '" . $_POST['comment'] . "' WHERE userid = '" . $_POST['userid'] . "';";
+    $sql ="UPDATE questionnaire SET username = '". $_POST['username'] . "', participation_id = '" . $_POST['participation_id'] . "', comment = '" . $_POST['comment'] . "' WHERE userid = '$userid';";
 
     mysqli_query($link, $sql);
 
@@ -29,8 +47,10 @@ else{
     // 文字コード
     mysqli_set_charset($link, 'utf8');
 
+    $userid = mysqli_real_escape_string($link, $_GET['userid']);
+
     // SELECT文を実行
-    $sql = "SELECT username , participation_id , comment , userid FROM questionnaire where userid ='" . $_GET['userid'] . "'";
+    $sql = "SELECT username , participation_id , comment , userid FROM questionnaire where userid ='$userid'";
 
     $res = mysqli_query($link, $sql);
 
@@ -46,19 +66,21 @@ else{
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php include('./Bootstrap_first.php'); ?>
     <title>アンケート入力</title>
 </head>
 <body>
+<div class="container">
     <h1 class="my-3">新人歓迎会参加アンケート</h1>
     <form method="POST" action="./edit.php">
-        <div>
+        <div class="form-group">
             <label for="username">氏名</label>
-            <input type="text" name="username" value=<?=  $row['username'] ?>/>
+            <input type="text" name="username" class="form-control" maxlength="20" value=<?=  $row['username'] ?>/>
         </div>
-        <div>
+        <div class="form-group">
             <label for="participation_id">新人歓迎会に参加しますか？:</label>
             
-            <select name="participation_id">
+            <select name="participation_id" class="form-control">
             <?php
                 if($row['participation_id'] === "1" ) {
                     $first_p_id = "1";
@@ -77,17 +99,20 @@ else{
                 <option value=<?= $second_p_id ?>><?= $second_status ?></optiohn>
             </select>
         </div>
-        <div>
+        <div class="form-group">
             <label for="comment">コメント:</label>
-            <textarea name="comment"><?= $row['comment'] ?></textarea>
+            <textarea name="comment" class="form-control" maxlength="100"><?= $row['comment'] ?></textarea>
         </div>
         <div>
         <input type="hidden" name="userid" value=<?= $row['userid'] ?> />
         </div>
         <div>
-            <button onclick="location.href='./index.php'">戻る</a>
-            <button type="submit">送信</button>
+            <a href='./index.php' class="btn btn-secondary">戻る</a>
+            <button type="submit" class="btn btn-secondary">送信</button>
         </div>
+        <input type="hidden" name="token" value="<?= htmlspecialchars($_SESSION['token']); ?>">
     </form>
+    <?php include('./Bootstrap_second.php'); ?>
+    </div>
 </body>
 </html>
