@@ -64,9 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
     }
 
     //htmlspcialchar()関数を使用して全て文字列として表示
-    $username = htmlspecialchars($_POST['username'], ENT_QUOTES, "UTF-8");
-    $participation_id = htmlspecialchars($_POST['participation_id'], ENT_QUOTES, "UTF-8");
-    $comment = htmlspecialchars($_POST['comment'], ENT_QUOTES, "UTF-8");
+    // $username = htmlspecialchars($_POST['username'], ENT_QUOTES, "UTF-8");
+    // $participation_id = htmlspecialchars($_POST['participation_id'], ENT_QUOTES, "UTF-8");
+    // $comment = htmlspecialchars($_POST['comment'], ENT_QUOTES, "UTF-8");
+
+    $userid = mysqli_real_escape_string($link, $_POST['userid']);
+    $participation_id = mysqli_real_escape_string($link, $_POST['participation_id']);
+    $comment = mysqli_real_escape_string($link, $_POST['comment']);
 
     // データの投入
     $sql = "INSERT INTO `questionnaire` (`username`, `participation_id`, `comment`) VALUES ('"  . $username . "', " . $participation_id . ", '" . $comment . "');";
@@ -100,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
                 <label for="username">氏名</label>
 
                 <!-- ユーザー名エラー時クラスを追加 -->
-                <input type="text" name="username" class="form-control <?= $err_username_class ?>" />
+                <input type="text" name="username" class="form-control <?= $err_username_class ?>" value=<?= isset($_POST['username']) ? $_POST['username'] : " "; ?> />
 
                 <!-- ユーザー名エラー表示 -->
                 <FONT COLOR="red"><?= isset($err_username) ? $err_username : null ?></FONT>
@@ -116,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
                 <label for="comment">コメント:</label>
 
                 <!-- コメントエラー時クラスを追加 -->
-                <textarea name="comment" class="form-control <?= $err_comment_class ?>"></textarea>
+                <textarea name="comment" class="form-control <?= $err_comment_class ?>"><?= isset($_POST['comment']) ? $_POST['comment'] : null; ?></textarea>
 
                 <!-- コメントエラー表示 -->
                 <FONT COLOR="red"><?= isset($err_comment) ? $err_comment : null ?></FONT>

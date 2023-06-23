@@ -14,6 +14,10 @@ function validateToken()
     }
 }
 
+$err_username_flag = false;
+
+$err_comment_flag = false;
+
 //POST送信時
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
@@ -68,9 +72,14 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
     $userid = mysqli_real_escape_string($link, $_POST['userid']);
 
     //htmlspcialchar()関数を使用して全て文字列として表示
-    $username = htmlspecialchars($_POST['username'], ENT_QUOTES, "UTF-8");
-    $participation_id = htmlspecialchars($_POST['participation_id'], ENT_QUOTES, "UTF-8");
-    $comment = htmlspecialchars($_POST['comment'], ENT_QUOTES, "UTF-8");
+
+    // $username = htmlspecialchars($_POST['username'], ENT_QUOTES, "UTF-8");
+    // $participation_id = htmlspecialchars($_POST['participation_id'], ENT_QUOTES, "UTF-8");
+    // $comment = htmlspecialchars($_POST['comment'], ENT_QUOTES, "UTF-8");
+
+    $userid = mysqli_real_escape_string($link, $_POST['userid']);
+    $participation_id = mysqli_real_escape_string($link, $_POST['participation_id']);
+    $comment = mysqli_real_escape_string($link, $_POST['comment']);
 
     // SELECT文を実行
     $sql = "UPDATE questionnaire SET username = '" . $username . "', participation_id = '" . $participation_id . "', comment = '" . $comment . "' WHERE userid = '$userid';";
@@ -80,8 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
     // ホーム画面にリダイレクト
     header('Location: http://' . $_SERVER['HTTP_HOST']);
 }
+
+
 // GETの時の接続処理
-else {
+else if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
     $link = mysqli_connect('db', 'root', 'secret', 'sample');
     if ($link == null) {
@@ -92,10 +103,10 @@ else {
     mysqli_set_charset($link, 'utf8');
 
     //エスケープされる文字列に含まれる特殊文字をエスケープし、mysql_query()関数で安全に利用できる形式に変換します。
-    $userid = mysqli_real_escape_string($link, $_GET['userid']);
+    //$userid = mysqli_real_escape_string($link, $_GET['userid']);
 
     // SELECT文を実行
-    $sql = "SELECT username , participation_id , comment , userid FROM questionnaire where userid ='$userid'";
+    $sql = "SELECT username , participation_id , comment , userid FROM questionnaire where userid ='" . $_GET['userid'] . "';";
 
     $res = mysqli_query($link, $sql);
 
@@ -124,7 +135,10 @@ else {
         <form method="POST" action="./edit.php">
             <div class="form-group">
                 <label for="username">氏名</label>
-                <input type="text" name="username" class="form-control <?= $err_username_class ?>" value=<?= $row['username']; ?> />
+
+                <!-- コメントエラー時クラスを追加 -->
+                <!-- GET受信されていないときはPOST送信されたものを表示する -->
+                <input type="text" name="username" class="form-control <?= $err_username_class ?>" value="<?= isset($row['username']) ? $row['username'] : $_POST['username']; ?>" />
 
                 <!-- ユーザー名エラー表示 -->
                 <FONT COLOR="red"><?= isset($err_username) ? $err_username : null ?></FONT>
@@ -150,26 +164,32 @@ else {
                     ?>
                     <option value=<?= $first_p_id ?>><?= $first_status ?></option>
                     <option value=<?= $second_p_id ?>><?= $second_status ?></optiohn>
+
                 </select>
+
             </div>
             <div class="form-group">
 
                 <label for="comment">コメント:</label>
 
                 <!-- コメントエラー時クラスを追加 -->
-                <textarea name="comment" class="form-control <?= $err_comment_class ?>"><?= $row['comment'] ?></textarea>
+                <!-- GET受信されていないときはPOST送信されたものを表示する -->
+                <textarea name="comment" class="form-control <?= $err_comment_class ?>"><?= isset($row['comment']) ? $row['comment'] : $_POST['comment']; ?></textarea>
 
                 <!-- コメントエラー表示 -->
                 <FONT COLOR="red"><?= isset($err_comment) ? $err_comment : null ?></FONT>
 
             </div>
             <div>
-                <input type="hidden" name="userid" value=<?= $row['userid'] ?> />
+                <!-- GET受信されていないときはなにも送信しない -->
+                <input type="hidden" name="userid" value=<?= isset($row['userid']) ? $row['userid'] : ""; ?> />
             </div>
             <div>
 
                 <!-- 'index.php'にGET送信 -->
                 <a href='./index.php' class="btn btn-secondary">戻る</a>
+
+                <!-- エラーが出ているときは送信ボタンを押させない <?= ($err_username_flag || $err_comment_flag) ? "disabled" : null; ?>-->
                 <button type="submit" class="btn btn-secondary">送信</button>
             </div>
 
