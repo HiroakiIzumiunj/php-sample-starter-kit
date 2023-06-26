@@ -3,6 +3,9 @@
 //セッションスタート
 session_start();
 
+//URLからuser_idを取得
+$user_id = substr($_SERVER['REQUEST_URI'], 6);
+
 //送られたトークンが空、または一致していなければエラーを表示する関数
 function validateToken()
 {
@@ -22,10 +25,20 @@ $err_comment_flag = false;
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
     //ユーザー名が1文字以上、20文字以内で入力されなければエラー表示
-    if ((mb_strlen($_POST['username']) < 1) || (mb_strlen($_POST['username']) > 20)) {
+    if ((mb_strlen($_POST['username']) > 20)) {
 
         //エラーメッセージ
         $err_username = "ユーザー名を20文字以内で入力して下さい。";
+
+        //エラー時に追加するクラス
+        $err_username_class = "is-invalid";
+
+        //ユーザー名エラーのフラグをtrue
+        $err_username_flag = true;
+    } else if ((mb_strlen($_POST['username']) < 1)) {
+
+        //エラーメッセージ
+        $err_username = "ユーザー名は必須です。";
 
         //エラー時に追加するクラス
         $err_username_class = "is-invalid";
@@ -69,7 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
     mysqli_set_charset($link, 'utf8');
 
     //エスケープされる文字列に含まれる特殊文字をエスケープし、mysql_query()関数で安全に利用できる形式に変換します。
-    $userid = mysqli_real_escape_string($link, $_POST['userid']);
+    //$userid = mysqli_real_escape_string($link, $_POST['user_id']);
+
 
     //htmlspcialchar()関数を使用して全て文字列として表示
 
@@ -77,12 +91,12 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
     // $participation_id = htmlspecialchars($_POST['participation_id'], ENT_QUOTES, "UTF-8");
     // $comment = htmlspecialchars($_POST['comment'], ENT_QUOTES, "UTF-8");
 
-    $userid = mysqli_real_escape_string($link, $_POST['userid']);
+    $username = mysqli_real_escape_string($link, $_POST['username']);
     $participation_id = mysqli_real_escape_string($link, $_POST['participation_id']);
     $comment = mysqli_real_escape_string($link, $_POST['comment']);
 
     // SELECT文を実行
-    $sql = "UPDATE questionnaire SET username = '" . $username . "', participation_id = '" . $participation_id . "', comment = '" . $comment . "' WHERE userid = '$userid';";
+    $sql = "UPDATE questionnaire SET username = '" . $username . "', participation_id = '" . $participation_id . "', comment = '" . $comment . "' WHERE user_id = '" . $user_id . "';";
 
     mysqli_query($link, $sql);
 
@@ -106,7 +120,7 @@ else if ($_SERVER['REQUEST_METHOD'] === "GET") {
     //$userid = mysqli_real_escape_string($link, $_GET['userid']);
 
     // SELECT文を実行
-    $sql = "SELECT username , participation_id , comment , userid FROM questionnaire where userid ='" . $_GET['userid'] . "';";
+    $sql = "SELECT username , participation_id , comment , user_id FROM questionnaire where user_id ='" . $user_id . "';";
 
     $res = mysqli_query($link, $sql);
 
@@ -132,64 +146,63 @@ else if ($_SERVER['REQUEST_METHOD'] === "GET") {
 <body>
     <div class="container">
         <h1 class="my-3">新人歓迎会参加アンケート</h1>
-        <form method="POST" action="./edit.php">
-            <div class="form-group">
+
+        <form method="POST">
+            <div class="mb-3">
                 <label for="username">氏名</label>
 
                 <!-- コメントエラー時クラスを追加 -->
                 <!-- GET受信されていないときはPOST送信されたものを表示する -->
-                <input type="text" name="username" class="form-control <?= $err_username_class ?>" value="<?= isset($row['username']) ? $row['username'] : $_POST['username']; ?>" />
+                <input type="text" name="username" id="username" class="form-control <?= $err_username_class ?>" value="<?= isset($row['username']) ? $row['username'] : $_POST['username']; ?>" />
 
                 <!-- ユーザー名エラー表示 -->
-                <FONT COLOR="red"><?= isset($err_username) ? $err_username : null ?></FONT>
+                <div class="invalid-feedback"><?= $err_username ?></div>
 
             </div>
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="participation_id">新人歓迎会に参加しますか？:</label>
 
-                <select name="participation_id" class="form-control">
+                <select name="participation_id" id="participation_id" class="form-control">
                     <?php
                     //'participation_id'から、選択されている項目をセレクトボタンの最初に表示
                     if ($row['participation_id'] === "1") {
-                        $first_p_id = "1";
-                        $second_p_id = "2";
-                        $first_status = "参加！";
-                        $second_status = "不参加で。。。";
+                        $selected_ok = "selected";
+                        $selected_no = null;
                     } else {
-                        $first_p_id = "2";
-                        $second_p_id = "1";
-                        $first_status = "不参加で。。。";
-                        $second_status = "参加！";
+                        $selected_ok = null;
+                        $selected_no = "selected";
                     }
                     ?>
-                    <option value=<?= $first_p_id ?>><?= $first_status ?></option>
-                    <option value=<?= $second_p_id ?>><?= $second_status ?></optiohn>
+                    <!-- <option value=<?= $first_p_id ?>><?= $first_status ?></option>
+                    <option value=<?= $second_p_id ?>><?= $second_status ?></optiohn> -->
+
+                    <option value="1" <?= $selected_ok; ?>>参加！</option>
+                    <option value="2" <?= $selected_no; ?>>不参加で。。。</optiohn>
 
                 </select>
 
             </div>
-            <div class="form-group">
+            <div class="mb-3">
 
                 <label for="comment">コメント:</label>
 
                 <!-- コメントエラー時クラスを追加 -->
                 <!-- GET受信されていないときはPOST送信されたものを表示する -->
-                <textarea name="comment" class="form-control <?= $err_comment_class ?>"><?= isset($row['comment']) ? $row['comment'] : $_POST['comment']; ?></textarea>
+                <textarea name="comment" id="comment" class="form-control <?= $err_comment_class ?>"><?= isset($row['comment']) ? $row['comment'] : $_POST['comment']; ?></textarea>
 
                 <!-- コメントエラー表示 -->
-                <FONT COLOR="red"><?= isset($err_comment) ? $err_comment : null ?></FONT>
+                <div class="invalid-feedback"><?= isset($err_comment) ? $err_comment : null ?></div>
 
             </div>
             <div>
                 <!-- GET受信されていないときはなにも送信しない -->
-                <input type="hidden" name="userid" value=<?= isset($row['userid']) ? $row['userid'] : ""; ?> />
+                <input type="hidden" name="user_id" value=<?= isset($user_id) ? $user_id : ""; ?> />
             </div>
             <div>
 
                 <!-- 'index.php'にGET送信 -->
-                <a href='./index.php' class="btn btn-secondary">戻る</a>
+                <a href='/' class="btn btn-secondary">戻る</a>
 
-                <!-- エラーが出ているときは送信ボタンを押させない <?= ($err_username_flag || $err_comment_flag) ? "disabled" : null; ?>-->
                 <button type="submit" class="btn btn-secondary">送信</button>
             </div>
 

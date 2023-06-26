@@ -3,6 +3,10 @@
 //セッションスタート
 session_start();
 
+//URLからuser_idを取得
+$user_id = substr($_SERVER['REQUEST_URI'], 8);
+
+
 //送られたトークンが空、または一致していなければエラーを表示する関数
 function validateToken()
 {
@@ -31,10 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     mysqli_set_charset($link, 'utf8');
 
     //$userid = mysqli_real_escape_string($link, $_POST['userid']);
-    $userid = mysqli_real_escape_string($link, $_POST['userid']);
+
 
     // SELECT文を実行
-    $sql = "DELETE from questionnaire WHERE userid = '$userid'";
+    $sql = "DELETE from questionnaire WHERE user_id = '" . $user_id . "'";
 
     mysqli_query($link, $sql);
 

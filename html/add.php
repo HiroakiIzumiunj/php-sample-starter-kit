@@ -18,13 +18,29 @@ function validateToken()
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
     //ユーザー名が1文字以上、20文字以内で入力されなければエラー表示
-    if ((mb_strlen($_POST['username']) < 1) || (mb_strlen($_POST['username']) > 20)) {
+    if ((mb_strlen($_POST['username']) > 20)) {
 
         //ユーザー名エラーメッセージ
         $err_username = "ユーザー名を20文字以内で入力して下さい。";
 
         //ユーザー名エラー時に追加するクラス
         $err_username_class = "is-invalid";
+
+        //ユーザー名エラー時に追加するクラス
+        //$err_username_under_form_class = "invalid-feedback";
+
+        //ユーザー名エラーのフラグをtrue
+        $err_username_flag = true;
+    } else if ((mb_strlen($_POST['username']) < 1)) {
+
+        //エラーメッセージ
+        $err_username = "ユーザー名は必須です。";
+
+        //エラー時に追加するクラス
+        $err_username_class = "is-invalid";
+
+        //ユーザー名エラー時に追加するクラス
+        //$err_username_under_form_class = "invalid-feedback";
 
         //ユーザー名エラーのフラグをtrue
         $err_username_flag = true;
@@ -68,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
     // $participation_id = htmlspecialchars($_POST['participation_id'], ENT_QUOTES, "UTF-8");
     // $comment = htmlspecialchars($_POST['comment'], ENT_QUOTES, "UTF-8");
 
-    $userid = mysqli_real_escape_string($link, $_POST['userid']);
+    $username = mysqli_real_escape_string($link, $_POST['username']);
     $participation_id = mysqli_real_escape_string($link, $_POST['participation_id']);
     $comment = mysqli_real_escape_string($link, $_POST['comment']);
 
@@ -100,32 +116,32 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
     <div class="container">
         <h1 class="my-3">新人歓迎会参加アンケート</h1>
         <form method="POST" action="./add.php">
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="username">氏名</label>
 
                 <!-- ユーザー名エラー時クラスを追加 -->
-                <input type="text" name="username" class="form-control <?= $err_username_class ?>" value=<?= isset($_POST['username']) ? $_POST['username'] : " "; ?> />
+                <input type="text" name="username" id="username" class="form-control <?= $err_username_class ?>" value="<?= isset($_POST['username']) ? $_POST['username'] : '' ?>" />
 
                 <!-- ユーザー名エラー表示 -->
-                <FONT COLOR="red"><?= isset($err_username) ? $err_username : null ?></FONT>
+                <div class="invalid-feedback"><?= $err_username ?></div>
             </div>
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="participation_id">新人歓迎会に参加しますか？:</label>
-                <select name="participation_id" class="form-control">
+                <select name="participation_id" id="participation_id" class="form-control">
                     <option value="1">参加！</option>
                     <option value="2">不参加で。。。</optiohn>
                 </select>
             </div>
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="comment">コメント:</label>
 
                 <!-- コメントエラー時クラスを追加 -->
-                <textarea name="comment" class="form-control <?= $err_comment_class ?>"><?= isset($_POST['comment']) ? $_POST['comment'] : null; ?></textarea>
+                <textarea name="comment" id="comment" class="form-control <?= $err_comment_class ?>"><?= isset($_POST['comment']) ? $_POST['comment'] : null ?></textarea>
 
                 <!-- コメントエラー表示 -->
-                <FONT COLOR="red"><?= isset($err_comment) ? $err_comment : null ?></FONT>
+                <div class="invalid-feedback"><?= isset($err_comment) ? $err_comment : null ?></div>
             </div>
-            <div>
+            <div class="mb-3">
 
                 <!-- 'index.php'にGET送信 -->
                 <a href='./index.php' class="btn btn-secondary">戻る</a>
@@ -134,7 +150,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
 
             <!-- トークンを送る -->
             <input type="hidden" name="token" value="<?= htmlspecialchars($_SESSION['token']); ?>">
-        </form>
+    </div>
+    </form>
     </div>
 
     <!-- Bootstrapの最後のリンクを読み込む -->
