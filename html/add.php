@@ -109,6 +109,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
     <!-- Bootstrapの最初のリンクを読み込む -->
     <?php include('./Bootstrap_first.php'); ?>
 
+    <!-- validation.jsを読み込む -->
+    <script src="./validation.js"></script>
+
     <title>アンケート入力</title>
 </head>
 
@@ -124,6 +127,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
 
                 <!-- ユーザー名エラー表示 -->
                 <div class="invalid-feedback"><?= $err_username ?></div>
+
+                <!-- クライアントサイドバリデーション -->
+                <div class="err-msg-name"></div>
+
             </div>
             <div class="mb-3">
                 <label for="participation_id">新人歓迎会に参加しますか？:</label>
@@ -140,12 +147,16 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
 
                 <!-- コメントエラー表示 -->
                 <div class="invalid-feedback"><?= isset($err_comment) ? $err_comment : null ?></div>
+
+                <!-- クライアントサイドバリデーション -->
+                <div class="err-msg-comment"></div>
             </div>
             <div class="mb-3">
 
                 <!-- 'index.php'にGET送信 -->
                 <a href='./index.php' class="btn btn-secondary">戻る</a>
-                <button type="submit" class="btn btn-secondary">送信</button>
+
+                <button type="submit" id="submit" class="btn btn-secondary">送信</button>
             </div>
 
             <!-- トークンを送る -->

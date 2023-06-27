@@ -85,12 +85,9 @@ mysqli_close($link);
                 </tbody>
             <?php endwhile; ?>
         </table>
-        <form action="./add.php" method="GET">
-            <input type=hidden name="" value="">
 
-            <!-- アンケート画面に遷移する -->
-            <td><input type=submit value=アンケートに回答する class="btn btn-secondary"></td>
-        </form>
+        <a href="./add.php" class="btn btn-secondary">アンケートに回答する</a>
+
     </div>
 
 
