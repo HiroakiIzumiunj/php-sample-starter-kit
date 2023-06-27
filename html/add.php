@@ -126,10 +126,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
                 <input type="text" name="username" id="username" class="form-control <?= $err_username_class ?>" value="<?= isset($_POST['username']) ? $_POST['username'] : '' ?>" />
 
                 <!-- ユーザー名エラー表示 -->
-                <div class="invalid-feedback"><?= $err_username ?></div>
+                <div class="invalid-feedback" id="err-msg-name"><?= $err_username ?></div>
 
-                <!-- クライアントサイドバリデーション -->
-                <div class="err-msg-name"></div>
 
             </div>
             <div class="mb-3">
@@ -146,10 +144,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && !$err_username_flag && !$err_commen
                 <textarea name="comment" id="comment" class="form-control <?= $err_comment_class ?>"><?= isset($_POST['comment']) ? $_POST['comment'] : null ?></textarea>
 
                 <!-- コメントエラー表示 -->
-                <div class="invalid-feedback"><?= isset($err_comment) ? $err_comment : null ?></div>
+                <div class="invalid-feedback" id="err-msg-comment"><?= isset($err_comment) ? $err_comment : null ?></div>
 
-                <!-- クライアントサイドバリデーション -->
-                <div class="err-msg-comment"></div>
+
             </div>
             <div class="mb-3">
 

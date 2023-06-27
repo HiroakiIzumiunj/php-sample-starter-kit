@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     if ((mb_strlen($_POST['comment']) > 100)) {
 
         //エラーメッセージ
-        $err_comment = "ユーザーは100文字以内で入力して下さい。";
+        //$err_comment = "ユーザーは100文字以内で入力して下さい。";
 
         //エラー時にクラスを追加
         $err_comment_class = "is-invalid";
@@ -159,10 +159,7 @@ else if ($_SERVER['REQUEST_METHOD'] === "GET") {
                 <input type="text" name="username" id="username" class="form-control <?= $err_username_class ?>" value="<?= isset($row['username']) ? $row['username'] : $_POST['username']; ?>" />
 
                 <!-- ユーザー名エラー表示 -->
-                <div class="invalid-feedback err-msg-name"><?= $err_username ?></div>
-
-                <!-- クライアントサイドバリデーション -->
-                <div class="err-msg-name"></div>
+                <div class="invalid-feedback" id="err-msg-name"><?= $err_username ?></div>
 
             </div>
             <div class="mb-3">
@@ -195,10 +192,8 @@ else if ($_SERVER['REQUEST_METHOD'] === "GET") {
                 <textarea name="comment" id="comment" class="form-control <?= $err_comment_class ?>"><?= isset($row['comment']) ? $row['comment'] : $_POST['comment']; ?></textarea>
 
                 <!-- コメントエラー表示 -->
-                <div class="invalid-feedback"><?= isset($err_comment) ? $err_comment : null ?></div>
+                <div class="invalid-feedback" id="err-msg-comment"><?= isset($err_comment) ? $err_comment : null ?></div>
 
-                <!-- クライアントサイドバリデーション -->
-                <div class="err-msg-comment"></div>
 
             </div>
             <div>

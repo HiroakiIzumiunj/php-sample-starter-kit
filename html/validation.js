@@ -9,14 +9,14 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 
         //デフォルトアクションをキャンセル
-        e.preventDefault();
+        //e.preventDefault();
 
         //「氏名」入力欄の空欄チェック
         //フォームの要素を取得
         const username = document.querySelector('#username');
 
         //エラーメッセージを表示させる要素を取得
-        const errMsgName = document.querySelector('.err-msg-name');
+        const errMsgName = document.querySelector('#err-msg-name');
 
         if(!username.value){
 
@@ -24,7 +24,7 @@ window.addEventListener('DOMContentLoaded',()=>{
             //errMsgName.classList.add('invalid-feedback');
 
             // エラーメッセージのテキスト
-            errMsgName.textContent = 'ユーザー名は必須です。!!!!!';
+            errMsgName.textContent = 'ユーザー名は必須です!!!!!。';
 
             //クラスを追加（フォームの枠線を赤くする）is-invalid?
             username.classList.add('is-invalid');
@@ -59,7 +59,7 @@ window.addEventListener('DOMContentLoaded',()=>{
         const comment = document.querySelector('#comment');
 
         //エラーメッセージを表示させる要素を取得
-        const errMsgComment = document.querySelector('.err-msg-comment');
+        const errMsgComment = document.querySelector('#err-msg-comment');
 
         if(comment.string.length > 100){
 
@@ -67,7 +67,7 @@ window.addEventListener('DOMContentLoaded',()=>{
             errMsgComment.classList.add('form-invalid');
 
             // エラーメッセージのテキスト
-            errMsgName.textContent = 'ユーザーは100文字以内で入力して下さい。';
+            errMsgName.textContent = 'ユーザーは100文字以内で入力して下さい!!!!!。';
 
             //クラスを追加（フォームの枠線を赤くする）is-invalid?
             comment.classList.add('input-invalid');
