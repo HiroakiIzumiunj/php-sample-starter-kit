@@ -4,7 +4,9 @@
 session_start();
 
 //URLからuser_idを取得
-$user_id = substr($_SERVER['REQUEST_URI'], 6);
+//$user_id = substr($_SERVER['REQUEST_URI'], 6);
+
+$user_id = preg_replace('/[^0-9]/', '', $_SERVER['REQUEST_URI']);
 
 //送られたトークンが空、または一致していなければエラーを表示する関数
 function validateToken()
