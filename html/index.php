@@ -42,6 +42,8 @@ mysqli_close($link);
     <!-- Bootstrapの最初のリンクを読み込む -->
     <?php include('./Bootstrap_first.php'); ?>
 
+
+
     <title>アンケート入力</title>
 </head>
 
@@ -55,8 +57,8 @@ mysqli_close($link);
                     <th scope="col">氏名</th>
                     <th scope="col">参加するかどうか</th>
                     <th scope="col">コメント</th>
-                    <th scope="col" style="width: 10%"></th>
-                    <th scope="col" style="width: 10%"></th>
+                    <th scope="col" colspan="2"></th>
+
                 </tr>
             </thead>
 
@@ -71,20 +73,30 @@ mysqli_close($link);
                         <td><?= ($row['participation_id'] === "1") ? '参加！' : '不参加で。。。'; ?></td>
                         <td><?= $row['comment'] ?></td>
 
-                        <!-- 編集リンクボタン -->
-                        <td><a href="edit/<?= $row['user_id'] ?>" class="btn btn-link">編集</a></td>
+
                         <td>
+                            <!-- 編集リンクボタン -->
+                            <a href="edit/<?= $row['user_id'] ?>">編集</a>
+
                             <!-- 削除リンクボタン -->
-                            <form action="delete/<?= $row['user_id'] ?>" method="POST">
-                                <input type=submit value=削除 class="btn btn-link">
-                                <!-- トークンをdelete.phpに送る -->
-                                <input type=hidden name="token" value="<?= htmlspecialchars(($_SESSION['token']), ENT_QUOTES, 'UTF-8'); ?>">
-                            </form>
+                            <a href="#" onclick="document.deleted<?= $row['user_id'] ?>.submit();">削除</a>
                         </td>
+
+                        <form method="POST" name="deleted<?= $row['user_id'] ?>" action="delete/<?= $row['user_id'] ?>">
+
+                            <!-- トークンをdelete.phpに送る -->
+                            <input type="hidden" name="token" value="<?= htmlspecialchars(($_SESSION['token']), ENT_QUOTES, 'UTF-8'); ?>">
+
+                        </form>
+
+
+
                     </tr>
                 </tbody>
             <?php endwhile; ?>
         </table>
+
+
 
         <a href="./add.php" class="btn btn-secondary">アンケートに回答する</a>
 
@@ -94,6 +106,7 @@ mysqli_close($link);
 
     <!-- Bootstrapの最後のリンクを読み込む -->
     <?php include('./Bootstrap_second.php'); ?>
+
 
 
 
